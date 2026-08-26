@@ -7,12 +7,12 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class UserCreationRequest {
-    @NotBlank(message = "Username must not be blank")
-    @Size(min = 3, message = "Username must be at least 3 characters")
+    @NotBlank(message = "USERNAME_BLANK")
+    @Size(min = 3, message = "USERNAME_INVALID")
     private String username;
 
-    @NotBlank(message = "Username must not be blank")
-    @Size(min = 8, message = "Password must be at least 8 characters")
+    @NotBlank(message = "PASSWORD_BLANK")
+    @Size(min = 8, message = "PASSWORD_INVALID")
     private String password;
     private String fisrtName;
     private String lastName;
