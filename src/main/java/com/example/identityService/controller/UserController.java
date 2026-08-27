@@ -3,9 +3,13 @@ package com.example.identityService.controller;
 import com.example.identityService.dto.request.ApiResponse;
 import com.example.identityService.dto.request.UserCreationRequest;
 import com.example.identityService.dto.request.UserUpdateRequest;
+import com.example.identityService.dto.response.UserResponse;
 import com.example.identityService.entity.User;
 import com.example.identityService.service.UserService;
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +17,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
-    @Autowired
-    private UserService userService;
+    UserService userService;
 
     @PostMapping
     ApiResponse <User> createUser (@RequestBody @Valid UserCreationRequest request) {
@@ -34,15 +39,13 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    ApiResponse <User> getUser(@PathVariable("userId") String userID) {
-        ApiResponse <User> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.getUser(userID));
-        return apiResponse;
+    UserResponse getUser(@PathVariable("userId") String userID) {
+        return userService.getUser(userID);
     }
 
     @PutMapping("/{userId}")
-    ApiResponse <User> updateUser (@PathVariable ("userId") String userId, @RequestBody @Valid UserUpdateRequest request) {
-        ApiResponse <User> apiResponse = new ApiResponse<>();
+    ApiResponse <UserResponse> updateUser (@PathVariable ("userId") String userId, @RequestBody @Valid UserUpdateRequest request) {
+        ApiResponse <UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.updateUser(userId, request));
 
         return apiResponse;
