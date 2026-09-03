@@ -39,8 +39,12 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    UserResponse getUser(@PathVariable("userId") String userID) {
-        return userService.getUser(userID);
+    ApiResponse<UserResponse> getUser (@PathVariable("userId") String userID) {
+
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.getUser(userID));
+
+        return apiResponse;
     }
 
     @PutMapping("/{userId}")
