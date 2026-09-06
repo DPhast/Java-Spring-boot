@@ -50,7 +50,7 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/my-info")
+    @GetMapping("/myInfo")
     ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getMyInfo())
