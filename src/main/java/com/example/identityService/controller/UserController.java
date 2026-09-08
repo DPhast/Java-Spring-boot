@@ -5,6 +5,11 @@ import com.example.identityService.dto.request.UserCreationRequest;
 import com.example.identityService.dto.request.UserUpdateRequest;
 import com.example.identityService.dto.response.UserResponse;
 import com.example.identityService.entity.User;
+import com.example.identityService.exception.AppException;
+import com.example.identityService.exception.ErrorCode;
+import com.example.identityService.mapper.UserMapper;
+import com.example.identityService.repository.RoleRepository;
+import com.example.identityService.repository.UserRepository;
 import com.example.identityService.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -12,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -22,6 +29,11 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
     UserService userService;
+    UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
+
+    private final UserRepository userRepository;
 
     @PostMapping
     ApiResponse <UserResponse> createUser (@RequestBody @Valid UserCreationRequest request) {
@@ -58,11 +70,15 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    ApiResponse <UserResponse> updateUser (@PathVariable ("userId") String userId, @RequestBody @Valid UserUpdateRequest request) {
-        ApiResponse <UserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.updateUser(userId, request));
+    public  UserResponse updateUser (@PathVariable ("userId") String userId, @RequestBody @Valid UserUpdateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->  new AppException(ErrorCode.USER_NOT_EXISTED));
+        userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
 
-        return apiResponse;
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @DeleteMapping("/{userId}")

@@ -4,10 +4,11 @@ import com.example.identityService.dto.request.UserCreationRequest;
 import com.example.identityService.dto.request.UserUpdateRequest;
 import com.example.identityService.dto.response.UserResponse;
 import com.example.identityService.entity.User;
-import com.example.identityService.enums.Role;
+import com.example.identityService.entity.Role;
 import com.example.identityService.exception.AppException;
 import com.example.identityService.exception.ErrorCode;
 import com.example.identityService.mapper.UserMapper;
+import com.example.identityService.repository.RoleRepository;
 import com.example.identityService.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +31,7 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     public UserResponse createUser(UserCreationRequest request) {
 
@@ -43,9 +42,12 @@ public class UserService {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-//        user.setRoles(roles);
+        Role role = roleRepository.findById("USER").orElseThrow(() -> new RuntimeException("Role USER not found"));
+
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(role);
+
+        user.setRoles(roles);
 
 
 

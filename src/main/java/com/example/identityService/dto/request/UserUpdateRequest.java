@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Data
@@ -14,9 +15,10 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
     @Size(min = 8, message = "Password must be at least 8 characters")
-    private String password;
+     String password;
 
-    private String firstName;
-    private String lastName;
-    private LocalDate dob;
+     String firstName;
+     String lastName;
+     LocalDate dob;
+     List<String> roles;
 }
