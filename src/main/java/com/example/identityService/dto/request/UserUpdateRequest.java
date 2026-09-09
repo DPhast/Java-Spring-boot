@@ -1,5 +1,6 @@
 package com.example.identityService.dto.request;
 
+import com.example.identityService.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +20,8 @@ public class UserUpdateRequest {
 
      String firstName;
      String lastName;
+
+     @DobConstraint(min = 18, message = "Invalid date of birth")
      LocalDate dob;
      List<String> roles;
 }
