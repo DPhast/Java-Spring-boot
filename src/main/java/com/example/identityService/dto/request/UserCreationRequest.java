@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
     @NotBlank(message = "USERNAME_BLANK")
-    @Size(min = 3, message = "USERNAME_INVALID")
+    @Size(min = 5, message = "USERNAME_INVALID")
     String username;
 
     @NotBlank(message = "PASSWORD_BLANK")
@@ -25,6 +25,6 @@ public class UserCreationRequest {
     String firstName;
     String lastName;
 
-    @DobConstraint(min = 18, message = "INVALID_DOB")
+    @DobConstraint(min = 16, message = "INVALID_DOB")
     LocalDate dob;
 }
