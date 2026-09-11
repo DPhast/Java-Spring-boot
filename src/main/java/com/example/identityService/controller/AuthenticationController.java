@@ -3,8 +3,10 @@ package com.example.identityService.controller;
 import com.example.identityService.dto.request.ApiResponse;
 import com.example.identityService.dto.request.AuthenticationRequest;
 import com.example.identityService.dto.request.IntrospectRequest;
+import com.example.identityService.dto.request.LogoutRequest;
 import com.example.identityService.dto.response.AuthenticationResponse;
 import com.example.identityService.dto.response.IntrospectResponse;
+import com.example.identityService.entity.InvalidatedToken;
 import com.example.identityService.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
@@ -24,12 +26,21 @@ import java.text.ParseException;
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
-    @PostMapping("/log-in")
+    @PostMapping("/login")
     ApiResponse<AuthenticationResponse> authenticate (@RequestBody AuthenticationRequest request) {
     var result = authenticationService.authenticate(request);
     return ApiResponse.<AuthenticationResponse>builder().
             result(result)
             .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout (@RequestBody LogoutRequest request)
+        throws ParseException,JOSEException {
+        authenticationService.logout(request);
+
+        return ApiResponse.<Void>builder()
+                .build();
     }
 
     @PostMapping("/introspect")
